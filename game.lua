@@ -2021,6 +2021,12 @@ function Game:start_run(args)
     local saveTable = args.savetext or nil
     G.SAVED_GAME = nil
 
+    -- Keep an independent copy of the checkpoint used to start this run, so the
+    -- SL button can restart from it without aliasing the live game tables.
+    -- Card:load() stores subtable references from the save table, so reusing the
+    -- same table would let the running game mutate the checkpoint.
+    G.ARGS.save_run = saveTable and copy_table(saveTable) or nil
+
     self:prep_stage(G.STAGES.RUN, saveTable and saveTable.STATE or G.STATES.BLIND_SELECT)
     
     G.STAGE = G.STAGES.RUN
@@ -2195,26 +2201,6 @@ function Game:start_run(args)
           return true
         end
       }))
-
-    if saveTable and saveTable.ACTION then
-        G.E_MANAGER:add_event(Event({delay = 0.5, trigger = 'after', blocking = false,blockable = false,func = (function() 
-            G.E_MANAGER:add_event(Event({func = (function() 
-                G.E_MANAGER:add_event(Event({func = (function() 
-                    for k, v in pairs(G.I.CARD) do
-                        if v.sort_id == saveTable.ACTION.card then
-                            G.FUNCS.use_card({config = {ref_table = v}}, nil, true)
-                        end
-                    end
-                            return true
-                        end)
-                    }))
-                        return true
-                    end)
-                }))
-                return true
-            end)
-        }))
-    end
 
     local CAI = {
         discard_W = G.CARD_W,
@@ -3063,7 +3049,12 @@ function Game:update_selecting_hand(dt)
         if #G.hand.cards < 1 and #G.deck.cards < 1 then
             end_round()
         else
-            save_run()
+            -- Only checkpoint at the start of a blind. Re-entering SELECTING_HAND
+            -- after a hand or a discard must not overwrite the round-start save,
+            -- otherwise save-loading cannot rewind the current blind.
+            if G.GAME.current_round.hands_played == 0 and G.GAME.current_round.discards_used == 0 then
+                save_run()
+            end
             G.CONTROLLER:recall_cardarea_focus('hand')
         end
     end
@@ -3168,7 +3159,10 @@ function Game:update_shop(dt)
                                 end
 
                                 G.CONTROLLER:snap_to({node = G.shop:get_UIE_by_ID('next_round_button')})
-                                if not nosave_shop then G.E_MANAGER:add_event(Event({ func = function() save_run(); return true end})) end
+                                -- Checkpoint synchronously, as soon as the stock has been
+                                -- generated: the SL button must be able to return to the
+                                -- shop entry even while the card animations are still playing.
+                                if not nosave_shop then save_run() end
                                 return true
                             end
                         end}))

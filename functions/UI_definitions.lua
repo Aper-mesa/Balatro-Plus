@@ -2232,13 +2232,14 @@ function create_dynatext_pips(args)
   return {n=G.UIT.R, config={padding = 0.05, align = "cm"}, nodes=pips}
 end
 
-function create_UIBox_options()  
+function create_UIBox_options()
   local current_seed = nil
   local restart = nil
   local main_menu = nil
   local your_collection = nil
   local credits = nil
   local customize = nil
+  local sl = nil
 
   G.E_MANAGER:add_event(Event({
     blockable = false,
@@ -2249,6 +2250,9 @@ function create_UIBox_options()
   }))
 
   if G.STAGE == G.STAGES.RUN then
+    if G.STATE ~= G.STATES.GAME_OVER and G.ARGS and G.ARGS.save_run then
+      sl = UIBox_button{id = 'sl_button', label = {'SL'}, button = "sl", colour = G.C.BLUE, minw = 5}
+    end
     restart = UIBox_button{id = 'restart_button', label = {localize('b_start_new_run')}, button = "setup_run", minw = 5}
     main_menu = UIBox_button{ label = {localize('b_main_menu')}, button = "go_to_menu", minw = 5}
     your_collection = UIBox_button{ label = {localize('b_collection')}, button = "your_collection", minw = 5, id = 'your_collection'}
@@ -2277,6 +2281,7 @@ function create_UIBox_options()
   local customize = UIBox_button{ label = {localize('b_customize_deck')}, button = "customize_deck", minw = 5}
 
   local t = create_UIBox_generic_options({ contents = {
+      sl,
       settings,
       G.GAME.seeded and current_seed or nil,
       restart,

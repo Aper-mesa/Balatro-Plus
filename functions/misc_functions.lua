@@ -1445,12 +1445,6 @@ function recursive_table_cull(t)
   return ret_t
 end
 
-function save_with_action(action)
-  G.action = action
-  save_run()
-  G.action = nil
-end
-
 function save_run()
   if G.F_NO_SAVING == true then return end
   local cardAreas = {}
@@ -1474,7 +1468,6 @@ function save_run()
     tags = tags,
     GAME = G.GAME,
     STATE = G.STATE,
-    ACTION = G.action or nil,
     BLIND = G.GAME.blind:save(),
     BACK = G.GAME.selected_back:save(),
     VERSION = G.VERSION
@@ -1490,6 +1483,8 @@ function remove_save()
   love.filesystem.remove(G.SETTINGS.profile..'/save.jkr')
   G.SAVED_GAME = nil
   G.FILE_HANDLER.run = nil
+  -- Losing the run must not be undoable through the in-memory SL checkpoint.
+  if G.ARGS then G.ARGS.save_run = nil end
 end
 
 function loc_colour(_c, _default)

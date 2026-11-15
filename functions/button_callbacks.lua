@@ -1391,6 +1391,17 @@ G.FUNCS.options = function(e)
   }
 end
 
+-- Restart the current phase from the last checkpoint (start of the current
+-- blind, shop, blind selection or round evaluation). Same actions reproduce the
+-- same results; SL is meant for undoing a decision and trying something else.
+G.FUNCS.sl = function(e)
+  if G.STAGE ~= G.STAGES.RUN then return end
+  if G.STATE == G.STATES.GAME_OVER then return end
+  if not G.GAME or not G.ARGS or not G.ARGS.save_run then return end
+  local checkpoint = copy_table(G.ARGS.save_run)
+  G.FUNCS.start_run(nil, {savetext = checkpoint})
+end
+
 G.FUNCS.current_hands = function(e, simple)
   G.SETTINGS.paused = true
   G.FUNCS.overlay_menu{
@@ -2168,13 +2179,6 @@ end
       return
     end
 
-    if card.ability.set == 'Booster' and not nosave and G.STATE == G.STATES.SHOP then
-      save_with_action({
-        type = 'use_card',
-        card = card.sort_id,
-      })
-    end
-
     G.TAROT_INTERRUPT = G.STATE
     if card.ability.set == 'Booster' then G.GAME.PACK_INTERRUPT = G.STATE end 
     G.STATE = (G.STATE == G.STATES.TAROT_PACK and G.STATES.TAROT_PACK) or
@@ -2618,12 +2622,6 @@ end
         if G.GAME.tags[i]:apply_to_run({type = 'new_blind_choice'}) then break end
       end
 
-      G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.2*delayfac,
-          func = function()
-            save_run()
-            return true
-      end}))
-
       return true
     end}))
   end
@@ -2768,7 +2766,6 @@ end
           for i = 1, #G.jokers.cards do
             G.jokers.cards[i]:calculate_joker({skip_blind = true})
           end
-          save_run()
           for i = 1, #G.GAME.tags do
             G.GAME.tags[i]:apply_to_run({type = 'immediate'})
           end
@@ -2843,7 +2840,6 @@ end
           end
         }))
 
-        save_run()
         for i = 1, #G.GAME.tags do
           if G.GAME.tags[i]:apply_to_run({type = 'new_blind_choice'}) then break end
         end
@@ -2906,7 +2902,6 @@ end
         return true
       end
     }))
-    G.E_MANAGER:add_event(Event({ func = function() save_run(); return true end}))
   end
 
 G.FUNCS.cash_out = function(e)

@@ -1,6 +1,6 @@
 # Balatro Plus
 
-Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 **1.0.1o-PLUS**。
+Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 **1.0.1o-PLUS.3**。
 
 ## 功能
 
@@ -9,6 +9,8 @@ Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 *
 - 升级价格按稀有度：普通 $3、罕见 $5、稀有 $10、传奇 $20
 - 升级预览、金币扣除、「已升级」标记、存档兼容
 - 特殊升级的源码钩子（捷径、黄昏、隐形小丑选择复制、天文学家等）
+- 暂停菜单新增蓝色 **SL** 按钮：一键回到当前阶段开头（本盲注发牌后 / 刚进入商店 / 选盲注 / 回合结算），用于反悔后改做别的操作
+- SL 不扰动 RNG：同一操作重复执行结果不变；输掉整局后不能 SL
 
 ## 仓库说明
 
@@ -26,11 +28,13 @@ Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 *
 - `balatro_plus.lua`（新增）：升级系统、商店预览、隐形小丑选择界面等
 - `balatro_plus_upgrades.lua`（新增）：130 条升级数据
 - `card.lua`：升级标记、特殊小丑牌钩子、描述变量缓存
-- `globals.lua`：版本号 `1.0.1o-PLUS`
+- `globals.lua`：版本号 `1.0.1o-PLUS.3`
 - `main.lua`：加载 Balatro Plus 模块
-- `functions/UI_definitions.lua`：商店升级按钮与紧凑布局
-- `functions/misc_functions.lua`：升级版捷径的顺子判定
+- `functions/UI_definitions.lua`：商店升级按钮与紧凑布局、暂停菜单 SL 按钮
+- `functions/misc_functions.lua`：升级版捷径的顺子判定、SL 存档清除
 - `functions/state_events.lua`：升级版冲向月球的利息计算
+- `game.lua`：按阶段检查点存档、SL 回档、商店/回合检查点
+- `functions/button_callbacks.lua`：SL 按钮逻辑，移除回合内的重复自动存档
 
 ## Release
 

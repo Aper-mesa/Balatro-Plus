@@ -1,5 +1,5 @@
 VERSION = '1.0.1o'
-VERSION = VERSION..'-PLUS'
+VERSION = VERSION..'-PLUS.3'
 --check_version
 
 --Globals
