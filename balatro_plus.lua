@@ -197,8 +197,19 @@ function BP.get_def(card)
 end
 
 function BP.get_upgrade_cost(card)
+    local def = BP.get_def(card)
+    if def and type(def.cost) == "number" then
+        return def.cost
+    end
     local rarity = card and card.config and card.config.center and card.config.center.rarity or 1
     return BP.UPGRADE_COSTS[rarity] or BP.UPGRADE_COSTS[1]
+end
+
+function BP.has_effect_design(def)
+    if not def then return false end
+    return (def.text or def.ability or def.preview_ability
+        or def.preview_loc_vars or def.preview_text
+        or def.calculate or def.on_upgrade) and true or false
 end
 
 function BP.can_afford(cost)
@@ -508,7 +519,17 @@ function BP.build_desc_nodes(key, vars)
     local nodes = {}
     local joker_loc = G.localization.descriptions and G.localization.descriptions.Joker
     if joker_loc and joker_loc[key] then
-        localize{type = "descriptions", key = key, set = "Joker", nodes = nodes, vars = vars or {}}
+        -- The panels use G.C.L_BLACK as their background, which is exactly the
+        -- value loc_colour() falls back to.  Pass an explicit default so the
+        -- uncoloured parts of the description do not come out invisible.
+        localize{
+            type = "descriptions",
+            key = key,
+            set = "Joker",
+            nodes = nodes,
+            vars = vars or {},
+            default_col = G.C.UI.TEXT_LIGHT,
+        }
     end
     return nodes
 end
@@ -575,23 +596,22 @@ function BP.open_upgrade_preview(card)
     local upgraded_nodes
     local placeholder_note = nil
 
-    if def then
-        if def.preview_text then
-            upgraded_nodes = BP.build_plain_desc_nodes(def.preview_text)
-        elseif def.text then
-            local vars = (def.preview_loc_vars and def.preview_loc_vars(card))
-                or (def.loc_vars and def.loc_vars(card))
-                or base_vars
-            upgraded_nodes = BP.build_desc_nodes(key .. "_bp", vars)
-        elseif def.ability or def.preview_ability or def.preview_loc_vars then
-            local vars = BP.get_preview_loc_vars(card, def)
-            upgraded_nodes = BP.build_desc_nodes(key, vars)
-        else
-            upgraded_nodes = BP.build_desc_nodes(key, base_vars)
-        end
+    local effect_designed = BP.has_effect_design(def)
+    if def and def.preview_text then
+        upgraded_nodes = BP.build_plain_desc_nodes(def.preview_text)
+    elseif def and def.text then
+        local vars = (def.preview_loc_vars and def.preview_loc_vars(card))
+            or (def.loc_vars and def.loc_vars(card))
+            or base_vars
+        upgraded_nodes = BP.build_desc_nodes(key .. "_bp", vars)
+    elseif def and (def.ability or def.preview_ability or def.preview_loc_vars) then
+        local vars = BP.get_preview_loc_vars(card, def)
+        upgraded_nodes = BP.build_desc_nodes(key, vars)
     else
         upgraded_nodes = BP.build_desc_nodes(key, base_vars)
-        placeholder_note = bp_localize("bp_upgrade_placeholder")
+        if not effect_designed then
+            placeholder_note = bp_localize("bp_upgrade_placeholder")
+        end
     end
 
     local cost = BP.get_upgrade_cost(card)
