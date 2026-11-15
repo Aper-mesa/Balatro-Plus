@@ -37,7 +37,6 @@ CLAUDE.md
 .codeium/
 .copilot/
 .gemini/
-.codex/
 .specstory/
 .roo/
 .cline/
@@ -46,3 +45,14 @@ CLAUDE.md
 .qwen/
 .opencode/
 .augment/
+
+# Codex / GPT local configuration and instructions (at any depth)
+.codex/
+.chatgpt/
+.gpt/
+.openai/
+AGENTS.md
+AGENTS.override.md
+CODEX.md
+CHATGPT.md
+GPT.md
