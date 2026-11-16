@@ -1,11 +1,13 @@
 # Balatro Plus
 
-Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 **1.0.1o-PLUS.3**。
+Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 **1.0.1o-PLUS.4**。
 
 ## 功能
 
 - 小丑牌可在商店升级
 - 选项新增SL按钮，可一键SL
+- 选中手牌后实时预览本次出牌得分（显示在出牌区上方）
+- 换牌、改变选中牌顺序、调整小丑牌顺序、使用塔罗/星球牌等操作都会立即刷新预览
 
 ## 仓库说明
 
@@ -22,8 +24,9 @@ Balatro Plus 是基于 **Balatro 1.0.1o** 源码的修改版，当前版本号 *
 
 - `balatro_plus.lua`（新增）：升级系统、商店预览、隐形小丑选择界面等
 - `balatro_plus_upgrades.lua`（新增）：130 条升级数据
+- `balatro_plus_preview.lua`（新增）：实时得分预览（沙盒运行真实计分流程）
 - `card.lua`：升级标记、特殊小丑牌钩子、描述变量缓存
-- `globals.lua`：版本号 `1.0.1o-PLUS.3`
+- `globals.lua`：版本号 `1.0.1o-PLUS.4`
 - `main.lua`：加载 Balatro Plus 模块
 - `functions/UI_definitions.lua`：商店升级按钮与紧凑布局、暂停菜单 SL 按钮
 - `functions/misc_functions.lua`：升级版捷径的顺子判定、SL 存档清除

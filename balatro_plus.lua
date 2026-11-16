@@ -80,6 +80,7 @@ BP.LOCALES = {
             bp_upgrade_none = "没有可升级的小丑牌",
             bp_invisible_title = "选择复制的小丑牌",
             bp_invisible_hint = "售出隐形小丑后，将复制你选择的小丑牌",
+            bp_preview_label = "预计",
         },
         labels = {
             bp_upgraded = "已升级",
@@ -101,6 +102,7 @@ BP.LOCALES = {
             bp_upgrade_none = "沒有可升級的小丑牌",
             bp_invisible_title = "選擇複製的小丑牌",
             bp_invisible_hint = "售出隱形小丑後，將複製你選擇的小丑牌",
+            bp_preview_label = "預計",
         },
         labels = {
             bp_upgraded = "已升級",
@@ -122,6 +124,7 @@ BP.LOCALES = {
             bp_upgrade_none = "No upgradable jokers",
             bp_invisible_title = "Choose a Joker to copy",
             bp_invisible_hint = "Selling Invisible Joker will copy the chosen joker",
+            bp_preview_label = "Est.",
         },
         labels = {
             bp_upgraded = "Upgraded",
@@ -838,3 +841,4 @@ end
 
 -- The designed data lives in its own file so the core system stays readable.
 require "balatro_plus_upgrades"
+require "balatro_plus_preview"
